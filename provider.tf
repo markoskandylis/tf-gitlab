@@ -9,6 +9,6 @@ terraform {
 }
 
 provider "gitlab" {
-    base_url = "http://gitlab-loadbalancer-1002637374.eu-west-2.elb.amazonaws.com/api/v4/" 
-  token = "glpat-sdLuZD2Qp2kULMb5pvKw"
+    base_url = 
+  token = 
 }
