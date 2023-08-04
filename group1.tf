@@ -1,32 +1,44 @@
-//Creating Group for Gitlab
-resource "gitlab_group" "my_group" {
-  name        = "FirstGroup1"
-  path        = "accounts"
+locals {
+  groups = {
+    "Group1" = [
+      "Project1",
+      "Project2",
+      "Project6",
+    ],
+    "Group2" = [
+      "Project5",
+      "Project7"
+    ]
+    "Group3" = [
+      "Project3",
+      "Project8",
+      "Project9",
+    ]
+  }
+
+  projects = flatten([
+    for group, projects in local.groups : [
+      for project in projects : {
+        group = group
+        project = project
+      }
+    ]
+  ])
+}
+
+
+
+resource "gitlab_group" "this" {
+  for_each    = local.groups
+  name        = each.key
+  path        = each.key
   description = "An example group"
 }
 
-# Create a project in the example group
-resource "gitlab_project" "tenant_a" {
-  name         = "accountA1"
-  description  = "An example project"
-  namespace_id = gitlab_group.my_group.id
-}
-
-resource "gitlab_project" "tenant_b" {
-  name         = "accountB1"
-  description  = "An example project"
-  namespace_id = gitlab_group.my_group.id
-}
-
-resource "gitlab_project" "tenant_c" {
-  name         = "accountC1"
-  description  = "An example project"
-  namespace_id = gitlab_group.my_group.id
-}
-
-resource "gitlab_project" "tenant_d" {
-  name         = "accountD1"
-  description  = "An example project"
-  namespace_id = gitlab_group.my_group.id
+resource "gitlab_project" "this" {
+  for_each          = { for project in local.projects : "${project.group}.${project.project}" => project }
+  name              = each.value.project
+  description       = "An example project"
+  namespace_id      = gitlab_group.this[each.value.group].id
 }
 

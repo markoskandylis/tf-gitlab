@@ -2,13 +2,13 @@
 terraform {
   required_providers {
     gitlab = {
-      source = "gitlabhq/gitlab"
+      source  = "gitlabhq/gitlab"
       version = "16.1.1"
     }
   }
 }
 
 provider "gitlab" {
-    base_url = 
-  token = 
+  base_url =
+  token    = 
 }
