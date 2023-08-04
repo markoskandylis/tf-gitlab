@@ -1,22 +1,34 @@
 locals {
   groups = {
-    Group1 = {
-      group_name = "group 1"
-      group_path = "group-1"
-      projects = toset([
-        "Project1",
-        "Project2",
-        "Project3",
-      ]),
+    Authentication = {
+      group_name = "Authentication"
+      group_path = "Authentication"
+      projects = [ 
+        {
+          name = "CCDF-RemoteServices"
+        },
+        {
+          name = "Project2"
+        },
+       {
+          name = "Project3"
+        },
+    ]
     },
-    Group2 = {
-      group_name = "group 2"
-      group_path = "group-2"
-      projects = toset([
-        "Project4",
-        "Project5",
-        "Project6",
-      ]),
+    RemoteAccess = {
+      group_name = "RemoteAccess"
+      group_path = "RemoteAccess"
+      projects = [
+        {
+          name = "CCDF-RemoteServices"
+        },
+        {
+          name = "Project5"
+        },
+        {
+          name = "Project6"
+        },
+    ]
     }
   }
 
@@ -26,7 +38,7 @@ locals {
           {
             group_name = v.group_name
             group_path = v.group_path
-            project    = p
+            project_name    = p.name
           }
         ]
       ]
@@ -43,8 +55,8 @@ resource "gitlab_group" "this" {
 }
 
 resource "gitlab_project" "this" {
-  for_each          = { for p in local.projects : "${p.group_path}-${p.project}" => p }
-  name              = each.value.project
+  for_each          = { for p in local.projects : "${p.group_path}-${p.project_name}" => p }
+  name              = each.value.project_name
   description       = "An example project"
   namespace_id      = gitlab_group.this[each.value.group_path].id
 }
